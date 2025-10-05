@@ -1,0 +1,144 @@
+🎬 Commandes SQLite pour Netflim Database
+==========================================
+
+📁 Localisation de la base : netflim-back/database/netflim.db
+
+🔧 COMMANDES DE BASE
+===================
+
+# Ouvrir la base de données
+sqlite3 database/netflim.db
+
+# Voir toutes les tables
+.tables
+
+# Voir la structure d'une table
+.schema users
+.schema movies
+.schema likes
+
+# Quitter SQLite
+.quit
+
+📊 STATISTIQUES
+===============
+
+# Compter les utilisateurs
+SELECT COUNT(*) as total_users FROM users;
+
+# Compter les films
+SELECT COUNT(*) as total_movies FROM movies;
+
+# Compter les likes
+SELECT COUNT(*) as total_likes FROM likes;
+
+# Likes vs Dislikes
+SELECT 
+    COUNT(CASE WHEN is_liked = 1 THEN 1 END) as likes,
+    COUNT(CASE WHEN is_liked = 0 THEN 1 END) as dislikes
+FROM likes;
+
+👥 UTILISATEURS
+===============
+
+# Voir tous les utilisateurs
+SELECT * FROM users ORDER BY created_at DESC;
+
+# Derniers 10 utilisateurs
+SELECT id, session_id, created_at FROM users ORDER BY created_at DESC LIMIT 10;
+
+# Utilisateurs les plus actifs
+SELECT u.session_id, COUNT(l.id) as total_likes
+FROM users u
+LEFT JOIN likes l ON u.id = l.user_id
+GROUP BY u.id, u.session_id
+ORDER BY total_likes DESC
+LIMIT 10;
+
+🎭 FILMS
+========
+
+# Voir tous les films
+SELECT * FROM movies ORDER BY created_at DESC;
+
+# Derniers 10 films
+SELECT id, title, release_date, vote_average FROM movies ORDER BY created_at DESC LIMIT 10;
+
+# Films les plus aimés
+SELECT m.title, COUNT(l.id) as likes_count
+FROM movies m
+LEFT JOIN likes l ON m.id = l.movie_id AND l.is_liked = 1
+GROUP BY m.id, m.title
+ORDER BY likes_count DESC
+LIMIT 10;
+
+# Films les plus détestés
+SELECT m.title, COUNT(l.id) as dislikes_count
+FROM movies m
+LEFT JOIN likes l ON m.id = l.movie_id AND l.is_liked = 0
+GROUP BY m.id, m.title
+ORDER BY dislikes_count DESC
+LIMIT 10;
+
+❤️ LIKES
+========
+
+# Voir tous les likes
+SELECT l.*, m.title, u.session_id
+FROM likes l
+LEFT JOIN movies m ON l.movie_id = m.id
+LEFT JOIN users u ON l.user_id = u.id
+ORDER BY l.created_at DESC;
+
+# Derniers 10 likes
+SELECT 
+    l.id,
+    CASE WHEN l.is_liked = 1 THEN 'LIKE' ELSE 'DISLIKE' END as type,
+    m.title as movie,
+    u.session_id as user,
+    l.created_at
+FROM likes l
+LEFT JOIN movies m ON l.movie_id = m.id
+LEFT JOIN users u ON l.user_id = u.id
+ORDER BY l.created_at DESC
+LIMIT 10;
+
+# Likes par utilisateur
+SELECT u.session_id, COUNT(l.id) as total_likes
+FROM users u
+LEFT JOIN likes l ON u.id = l.user_id
+GROUP BY u.id, u.session_id
+ORDER BY total_likes DESC;
+
+🔍 REQUÊTES AVANCÉES
+====================
+
+# Films avec le plus d'interactions
+SELECT 
+    m.title,
+    COUNT(l.id) as total_interactions,
+    COUNT(CASE WHEN l.is_liked = 1 THEN 1 END) as likes,
+    COUNT(CASE WHEN l.is_liked = 0 THEN 1 END) as dislikes
+FROM movies m
+LEFT JOIN likes l ON m.id = l.movie_id
+GROUP BY m.id, m.title
+ORDER BY total_interactions DESC
+LIMIT 10;
+
+# Activité par jour
+SELECT 
+    DATE(created_at) as date,
+    COUNT(*) as interactions
+FROM likes
+GROUP BY DATE(created_at)
+ORDER BY date DESC
+LIMIT 10;
+
+# Utilisateurs récents
+SELECT 
+    session_id,
+    created_at,
+    (SELECT COUNT(*) FROM likes WHERE user_id = users.id) as total_likes
+FROM users
+ORDER BY created_at DESC
+LIMIT 10;

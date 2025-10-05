@@ -8,6 +8,7 @@ require('dotenv').config();
 const { initializeDatabase } = require('./database/connection');
 const likeRoutes = require('./routes/likes');
 const userRoutes = require('./routes/users');
+const adminRoutes = require('./routes/admin');
 const { errorHandler } = require('./middleware/errorHandler');
 const { notFound } = require('./middleware/notFound');
 
@@ -60,6 +61,7 @@ app.get('/health', (req, res) => {
 // Routes API
 app.use('/api/likes', likeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Middleware pour les routes non trouvées
 app.use(notFound);

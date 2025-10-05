@@ -205,6 +205,31 @@ class Like {
       });
     });
   }
+
+  // Obtenir tous les likes
+  static async getAll() {
+    return new Promise((resolve, reject) => {
+      const db = getDatabase();
+      
+      const sql = `
+        SELECT l.*, m.title as movie_title, u.session_id
+        FROM likes l
+        LEFT JOIN movies m ON l.movie_id = m.id
+        LEFT JOIN users u ON l.user_id = u.id
+        ORDER BY l.created_at DESC
+      `;
+      
+      db.all(sql, (err, rows) => {
+        if (err) {
+          console.error('Erreur lors de la récupération des likes:', err);
+          reject(err);
+          return;
+        }
+        
+        resolve(rows || []);
+      });
+    });
+  }
 }
 
 module.exports = Like;

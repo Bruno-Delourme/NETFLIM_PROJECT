@@ -207,6 +207,44 @@ class User {
       });
     });
   }
+
+  // Obtenir tous les utilisateurs
+  static async getAll() {
+    return new Promise((resolve, reject) => {
+      const db = getDatabase();
+      
+      const sql = 'SELECT * FROM users ORDER BY created_at DESC';
+      
+      db.all(sql, (err, rows) => {
+        if (err) {
+          console.error('Erreur lors de la récupération des utilisateurs:', err);
+          reject(err);
+          return;
+        }
+        
+        resolve(rows || []);
+      });
+    });
+  }
+
+  // Obtenir le nombre total d'utilisateurs
+  static async getCount() {
+    return new Promise((resolve, reject) => {
+      const db = getDatabase();
+      
+      const sql = 'SELECT COUNT(*) as count FROM users';
+      
+      db.get(sql, (err, row) => {
+        if (err) {
+          console.error('Erreur lors du comptage des utilisateurs:', err);
+          reject(err);
+          return;
+        }
+        
+        resolve(row.count || 0);
+      });
+    });
+  }
 }
 
 module.exports = User;
