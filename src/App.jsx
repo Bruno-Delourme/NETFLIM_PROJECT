@@ -5,6 +5,7 @@ import MovieList from './components/MovieList';
 import MovieDetails from './components/MovieDetails';
 import ExpandedMovieCard from './components/ExpandedMovieCard';
 import UserProfile from './components/UserProfile';
+import { LikeProvider } from './contexts/LikeContext';
 import { movieApi } from './services/movieApi';
 
 function App() {
@@ -94,72 +95,74 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="header">
-        <div className="container">
-          <div className="header-content">
-            <div className="header-title">
-              <h1>🎬 Netflim</h1>
-            </div>
-            
-            <div className="header-search">
-              <SearchBar onSearch={handleSearch} loading={loading} />
-            </div>
-            
-            <button 
-              className="profile-button"
-              onClick={() => setShowUserProfile(true)}
-              title="Mon Profil"
-            >
-              👤 Profil
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <Routes>
-        <Route 
-          path="/" 
-          element={
-            <div className="container">
-              <MovieList 
-                movies={movies} 
-                loading={loading} 
-                error={error} 
-                onExpand={handleExpandMovie}
-              />
+    <LikeProvider>
+      <div className="App">
+        <header className="header">
+          <div className="container">
+            <div className="header-content">
+              <div className="header-title">
+                <h1>🎬 Netflim</h1>
+              </div>
               
-              {movies.length > 0 && currentPage < totalPages && (
-                <div style={{ textAlign: 'center', margin: '2rem 0' }}>
-                  <button 
-                    onClick={loadMoreMovies}
-                    className="search-button"
-                    disabled={loading}
-                  >
-                    {loading ? 'Chargement...' : 'Charger plus de films'}
-                  </button>
-                </div>
-              )}
+              <div className="header-search">
+                <SearchBar onSearch={handleSearch} loading={loading} />
+              </div>
+              
+              <button 
+                className="profile-button"
+                onClick={() => setShowUserProfile(true)}
+                title="Mon Profil"
+              >
+                👤 Profil
+              </button>
             </div>
-          } 
+          </div>
+        </header>
+
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <div className="container">
+                <MovieList 
+                  movies={movies} 
+                  loading={loading} 
+                  error={error} 
+                  onExpand={handleExpandMovie}
+                />
+                
+                {movies.length > 0 && currentPage < totalPages && (
+                  <div style={{ textAlign: 'center', margin: '2rem 0' }}>
+                    <button 
+                      onClick={loadMoreMovies}
+                      className="search-button"
+                      disabled={loading}
+                    >
+                      {loading ? 'Chargement...' : 'Charger plus de films'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            } 
+          />
+          <Route path="/movie/:id" element={<MovieDetails />} />
+        </Routes>
+        
+        {/* Modal d'expansion */}
+        {expandedMovie && (
+          <ExpandedMovieCard 
+            movie={expandedMovie} 
+            onClose={handleCloseExpanded}
+          />
+        )}
+        
+        {/* Modal de profil utilisateur */}
+        <UserProfile 
+          isOpen={showUserProfile}
+          onClose={() => setShowUserProfile(false)}
         />
-        <Route path="/movie/:id" element={<MovieDetails />} />
-      </Routes>
-      
-      {/* Modal d'expansion */}
-      {expandedMovie && (
-        <ExpandedMovieCard 
-          movie={expandedMovie} 
-          onClose={handleCloseExpanded}
-        />
-      )}
-      
-      {/* Modal de profil utilisateur */}
-      <UserProfile 
-        isOpen={showUserProfile}
-        onClose={() => setShowUserProfile(false)}
-      />
-    </div>
+      </div>
+    </LikeProvider>
   );
 }
 

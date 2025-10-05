@@ -59,16 +59,17 @@ const MovieCard = ({ movie, onExpand }) => {
             <span className="rating">
               ⭐ {movie.vote_average?.toFixed(1) || 'N/A'}
             </span>
+            <div className="like-container">
+              <LikeButton 
+                movieId={movie.id} 
+                movieData={movie}
+                onLikeChange={(movieId, isLiked, stats) => {
+                  // Optionnel: gérer les changements de like au niveau parent
+                  console.log(`Film ${movieId} ${isLiked ? 'aimé' : isLiked === false ? 'non aimé' : 'neutre'}`);
+                }}
+              />
+            </div>
           </div>
-          
-          <LikeButton 
-            movieId={movie.id} 
-            movieData={movie}
-            onLikeChange={(movieId, isLiked, stats) => {
-              // Optionnel: gérer les changements de like au niveau parent
-              console.log(`Film ${movieId} ${isLiked ? 'aimé' : isLiked === false ? 'non aimé' : 'neutre'}`);
-            }}
-          />
         </div>
       )}
     </div>

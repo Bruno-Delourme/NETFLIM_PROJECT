@@ -1,92 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { likeApi } from '../services/likeApi';
+import React, { useEffect } from 'react';
+import { useLikeContext } from '../contexts/LikeContext';
 
 const LikeButton = ({ movieId, movieData, onLikeChange }) => {
-  const [likeState, setLikeState] = useState(null); // null = neutre, true = aimé, false = pas aimé
-  const [loading, setLoading] = useState(false);
-  const [movieStats, setMovieStats] = useState({ likes: 0, dislikes: 0 });
+  const { 
+    loadLikeStatus, 
+    toggleLike, 
+    getLikeStatus, 
+    isLoading, 
+    getError, 
+    clearError 
+  } = useLikeContext();
 
   // Charger le statut de like au montage du composant
   useEffect(() => {
-    loadLikeStatus();
-  }, [movieId]);
+    loadLikeStatus(movieId);
+  }, [movieId, loadLikeStatus]);
 
-  const loadLikeStatus = async () => {
-    try {
-      const response = await likeApi.getLikeStatus(movieId);
-      setLikeState(response.data.isLiked);
-      setMovieStats(response.data.movieStats);
-    } catch (error) {
-      console.error('Erreur lors du chargement du statut de like:', error);
-      
-      // Si le backend n'est pas accessible, on continue sans erreur
-      if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
-        console.warn('Backend non accessible, fonctionnement en mode local uniquement');
-        setLikeState(null);
-        setMovieStats({ likes: 0, dislikes: 0 });
-      }
-    }
-  };
+  // Obtenir l'état actuel du like
+  const { isLiked: likeState, movieStats } = getLikeStatus(movieId);
+  const loading = isLoading(movieId);
 
   const handleToggleLike = async () => {
     if (loading) return;
     
     console.log('🔄 Toggle like - État actuel:', likeState);
     
-    try {
-      setLoading(true);
-      let newState;
-      
-      // Cycle des états : neutre → aimé → pas aimé → neutre
-      if (likeState === null) {
-        newState = true; // neutre → aimé
-      } else if (likeState === true) {
-        newState = false; // aimé → pas aimé
-      } else {
-        newState = null; // pas aimé → neutre
-      }
-      
-      console.log('🎯 Nouvel état:', newState);
-      console.log('🖼️ Image qui sera affichée:', getButtonImage());
-      
-      // Mettre à jour l'état immédiatement pour le feedback visuel
-      setLikeState(newState);
-      
-      if (newState === null) {
-        // Supprimer le like/dislike
-        await likeApi.unlikeMovie(movieId);
-      } else {
-        // Ajouter le like ou dislike avec les données du film
-        await likeApi.likeMovie(movieId, newState, movieData);
-      }
-      
-      // Recharger les statistiques
-      const response = await likeApi.getLikeStatus(movieId);
-      setMovieStats(response.data.movieStats);
+    const result = await toggleLike(movieId, movieData);
+    
+    if (result.success) {
+      console.log('✅ État mis à jour avec succès:', result.newState);
       
       // Notifier le parent du changement
       if (onLikeChange) {
-        onLikeChange(movieId, newState, response.data.movieStats);
+        onLikeChange(movieId, result.newState, result.movieStats);
       }
-      
-      console.log('✅ État mis à jour avec succès:', newState);
-    } catch (error) {
-      console.error('Erreur lors du toggle like:', error);
-      console.error('Détails de l\'erreur:', error.response?.data || error.message);
-      
-      // Si le backend n'est pas accessible, on fonctionne en mode local
-      if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
-        console.warn('Backend non accessible, fonctionnement en mode local uniquement');
-        // L'état a déjà été mis à jour visuellement
-        setMovieStats({ likes: 0, dislikes: 0 });
-        alert('Backend non accessible. Les likes ne seront pas sauvegardés.');
-      } else {
-        // Revenir à l'état précédent en cas d'erreur
-        setLikeState(likeState);
-        alert('Erreur lors de l\'enregistrement du like. Vérifiez que le backend est démarré.');
+    } else {
+      console.error('❌ Erreur lors du toggle like:', result.error);
+      if (result.error) {
+        alert(result.error);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
