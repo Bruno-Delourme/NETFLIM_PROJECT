@@ -101,7 +101,10 @@ function App() {
           <div className="container">
             <div className="header-content">
               <div className="header-title">
-                <h1>🎬 Netflim</h1>
+                <h1 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: 'pointer' }}>
+                  <span style={{ color: '#ff0000', fontSize: '2.34rem' }}>N</span>
+                  <span style={{ color: '#ffffff', fontSize: '0.468rem' }}>etFlim</span>
+                </h1>
               </div>
               
               <div className="header-search">
@@ -113,7 +116,7 @@ function App() {
                 onClick={() => setShowUserProfile(true)}
                 title="Mon Profil"
               >
-                👤 Profil
+                👤
               </button>
             </div>
           </div>
@@ -135,10 +138,11 @@ function App() {
                   <div style={{ textAlign: 'center', margin: '2rem 0' }}>
                     <button 
                       onClick={loadMoreMovies}
-                      className="search-button"
+                      className="load-more-button"
                       disabled={loading}
+                      title="Charger plus de films"
                     >
-                      {loading ? 'Chargement...' : 'Charger plus de films'}
+                      {loading ? '⏳' : '+'}
                     </button>
                   </div>
                 )}

@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(0deg, #00010f 0%, #010113 100%);
   min-height: 100vh;
   color: #333;
 }
@@ -22,8 +22,8 @@ body {
 }
 
 .header {
-  background: rgba(0, 0, 0, 0.8);
-  padding: 0.25rem 0;
+  background: linear-gradient(0deg, #00010f 0%, #02032c 100%);
+  padding: 0.15rem 0;
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -35,8 +35,8 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  padding: 0.25rem 0;
+  gap: 0.15rem;
+  padding: 0.15rem 0;
 }
 
 .header-title {
@@ -45,12 +45,18 @@ body {
 
 .header h1 {
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   margin: 0;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 35px;
 }
+
 
 .header-search {
   flex: 1;
@@ -62,16 +68,18 @@ body {
   background: linear-gradient(45deg, #3498db, #2980b9);
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 25px;
-  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
 }
 
 .profile-button:hover {
@@ -97,10 +105,20 @@ body {
   gap: 0.5rem;
 }
 
+.header-search .search-input-container {
+  max-width: 100%;
+}
+
 .header-search .search-input {
   max-width: 100%;
+  font-size: 0.85rem;
+  padding: 0.5rem 40px 0.5rem 0.7rem;
+}
+
+.header-search .search-button-embedded {
+  width: 28px;
+  height: 28px;
   font-size: 0.9rem;
-  padding: 0.6rem 0.8rem;
 }
 
 .header-search .search-button {
@@ -109,13 +127,20 @@ body {
   white-space: nowrap;
 }
 
+.search-input-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 400px;
+  pointer-events: auto;
+}
+
 .search-input {
-  padding: 10px 16px;
+  padding: 10px 50px 10px 16px;
   font-size: 1rem;
   border: none;
   border-radius: 25px;
   width: 100%;
-  max-width: 400px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
@@ -126,22 +151,87 @@ body {
   transform: translateY(-2px);
 }
 
-.search-button {
-  padding: 10px 24px;
-  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 1rem;
-  font-weight: 600;
+.search-button-embedded {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  z-index: 100;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.search-button-embedded:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-button-embedded:disabled {
+  opacity: 0.5;
+  cursor: pointer;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.search-button-embedded:disabled:hover {
+  background: rgba(255, 107, 107, 0.1);
+  transform: translateY(-50%) scale(1.05);
 }
 
 .search-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Bouton "Charger plus de films" */
+.load-more-button {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 1.5rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.load-more-button:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  background: linear-gradient(45deg, #2980b9, #3498db);
+}
+
+.load-more-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.15);
+}
+
+.load-more-button:disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.15);
 }
 
 .movies-grid {
@@ -1115,6 +1205,7 @@ body {
   
   .header h1 {
     font-size: 1.8rem;
+    width: auto;
   }
   
   .header-search .search-bar {
@@ -1137,6 +1228,12 @@ body {
   
   .movie-poster {
     height: 220px;
+  }
+  
+  .load-more-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
   
   
